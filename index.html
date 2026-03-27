@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Car Transformer Concept</title>
+    <meta name="description" content="Experience the future of machines.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "motion": "https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm"
+        }
+      }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar glass">
+        <div class="logo motion-nav-item">
+            <i data-lucide="hexagon" class="neon-icon"></i> <span class="brand-text">NEXUS</span>
+        </div>
+        <ul class="nav-links">
+            <li class="motion-nav-item"><a href="#home">Home</a></li>
+            <li class="motion-nav-item"><a href="#details">Details</a></li>
+            <li class="motion-nav-item"><a href="#pricing">Price</a></li>
+            <li class="motion-nav-item"><a href="#features">Features</a></li>
+            <li class="motion-nav-item"><a href="#transformation">Evolution</a></li>
+        </ul>
+        <div class="mobile-menu-btn motion-nav-item">
+            <i data-lucide="menu"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Sequence Section -->
+    <section id="home" class="hero-sequence">
+        <div class="hero-sticky">
+            <canvas id="hero-canvas"></canvas>
+            <div class="hero-overlay"></div>
+            <div class="hero-text-container">
+                <div class="hero-step" data-step="1">
+                    <h1 class="glitch-text" data-text="NEXUS PROTOCOL">NEXUS PROTOCOL</h1>
+                    <p class="subtitle">BEYOND IMAGINATION</p>
+                </div>
+                <div class="hero-step" data-step="2">
+                    <h2>AERODYNAMIC PLATING</h2>
+                    <p>Designed to break boundaries.</p>
+                </div>
+                <div class="hero-step" data-step="3">
+                    <h2>KINETIC CORE REVEAL</h2>
+                    <p>Energy harnessed in pure form.</p>
+                </div>
+                <div class="hero-step" data-step="4">
+                    <h2>READY FOR COMBAT</h2>
+                    <p>Fully adapted to the new reality.</p>
+                </div>
+            </div>
+            <!-- Scroll indicator -->
+            <div class="scroll-indicator">
+                <p>Scroll to Explore</p>
+                <i data-lucide="chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Details Section (Apple Style Scroll) -->
+    <section id="details" class="details-section">
+        <div class="sticky-container">
+            <div class="sticky-content">
+                <div class="details-visual">
+                    <img src="assets/transform_mid_1774625639605.png" alt="Engine Core" class="details-img">
+                </div>
+                <div class="details-text-container">
+                    <div class="detail-step" data-step="1">
+                        <h2>The Core Structure</h2>
+                        <p>Powered by a Dark Matter Reactor capable of sustaining Mach 1.5 speeds while maintaining absolute silence.</p>
+                    </div>
+                    <div class="detail-step" data-step="2">
+                        <h2>Aerodynamic Perfection</h2>
+                        <p>Every curve intricately designed to cut through atmospheric resistance, redefining what true velocity means gracefully.</p>
+                    </div>
+                    <div class="detail-step" data-step="3">
+                        <h2>Morphological Integrity</h2>
+                        <p>Nano-reinforced metallic plating reacts in milliseconds, shifting between extreme mobility and heavy combat forms.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="section-header motion-fade">
+            <h2>Acquire The Future</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Select the tier that matches your ambition.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card glass-card motion-card">
+                <div class="tier-name">Vanguard</div>
+                <div class="price"><span>$</span>1.2<span>M</span></div>
+                <p class="tier-desc">Standard recon and mobility platform.</p>
+                <ul class="tier-features">
+                    <li><i data-lucide="check"></i> Stealth Mode Form</li>
+                    <li><i data-lucide="check"></i> Mach 1 Top Speed</li>
+                    <li><i data-lucide="check"></i> Standard Nano-Plating</li>
+                    <li class="disabled"><i data-lucide="x"></i> Combat Deployable</li>
+                </ul>
+                <button class="btn btn-secondary full-width">Reserve Now</button>
+            </div>
+
+            <div class="pricing-card glass-card premium motion-card">
+                <div class="popular-badge">Most Advanced</div>
+                <div class="tier-name neon-text">Titan</div>
+                <div class="price neon-text"><span>$</span>2.8<span>M</span></div>
+                <p class="tier-desc">Fully equipped bipedal combat configuration.</p>
+                <ul class="tier-features">
+                    <li><i data-lucide="check"></i> All Vanguard Features</li>
+                    <li><i data-lucide="check"></i> Mach 2.5 Top Speed</li>
+                    <li><i data-lucide="check"></i> Hyper-flexible Cyber Joints</li>
+                    <li><i data-lucide="check"></i> Full Combat Mode Unlock</li>
+                    <li><i data-lucide="check"></i> Telepathic Interface Array</li>
+                </ul>
+                <button class="btn btn-glow full-width">Build Your Titan</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header motion-fade">
+            <h2>Next-Gen Capabilities</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass-card motion-fade-up">
+                <i data-lucide="cpu" class="feature-icon"></i>
+                <h3>AI Engine</h3>
+                <p>Advanced neural networks dictate seamless morphological shifts in real-time adaptation.</p>
+            </div>
+            <div class="feature-card glass-card motion-fade-up">
+                <i data-lucide="settings" class="feature-icon"></i>
+                <h3>Mechanical Design</h3>
+                <p>Nano-reinforced metallic plating integrated with hyper-flexible cyber joints.</p>
+            </div>
+            <div class="feature-card glass-card motion-fade-up">
+                <i data-lucide="zap" class="feature-icon"></i>
+                <h3>High-Speed</h3>
+                <p>Anti-gravity thrusters providing Mach 2 speeds on land with absolute precision.</p>
+            </div>
+            <div class="feature-card glass-card motion-fade-up">
+                <i data-lucide="shield" class="feature-icon"></i>
+                <h3>Smart Control</h3>
+                <p>Telepathic interface array for zero-latency machine synchronization bounds.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transformation Preview Section -->
+    <section id="transformation" class="transformation">
+        <div class="section-header motion-fade">
+            <h2>Evolution Series</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="transform-container">
+            <div class="transform-stage glass-card motion-slide-in">
+                <div class="image-wrapper">
+                    <img src="assets/model_stealth_1774625807987.png" id="car-img-src" alt="Vehicle Mode">
+                </div>
+                <div class="stage-info">
+                    <div class="stage-number">01</div>
+                    <h3>Stealth Mode</h3>
+                    <p>High-performance vehicular form optimized for extreme speed and discretion on the grid.</p>
+                </div>
+            </div>
+            <div class="transform-stage reverse glass-card motion-slide-in">
+                <div class="stage-info text-right">
+                    <div class="stage-number">02</div>
+                    <h3>Mid-Shift</h3>
+                    <p>Kinetic core activated. Armor plates disengage and realign in real-time fluid motion.</p>
+                </div>
+                <div class="image-wrapper">
+                    <img src="assets/transform_mid_1774625639605.png" id="mid-img-src" alt="Mid Transformation">
+                </div>
+            </div>
+            <div class="transform-stage glass-card motion-slide-in">
+                <div class="image-wrapper">
+                    <img src="assets/transform_robot_1774625733578.png" id="robot-img-src" alt="Combat Mode">
+                </div>
+                <div class="stage-info">
+                    <div class="stage-number">03</div>
+                    <h3>Combat Form</h3>
+                    <p>Full bipedal deployment. Maximum defensive and offensive capabilities unlocked.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
