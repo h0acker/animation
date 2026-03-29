@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const frameCount = 240;
         const currentFrame = index => (
-            `assets/images/herosection/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.png`
+            `assets/herosection/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.png`
         );
 
         const images = [];
@@ -51,42 +51,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateImage = index => {
             if (images[index] && images[index].complete) {
                 const img = images[index];
-                const cw = canvas.width;
-                const ch = canvas.height;
+                
+                // Set canvas size based on device pixel ratio for high DPI (Retina) support
+                const dpr = window.devicePixelRatio || 1;
+                const cw = canvas.clientWidth * dpr;
+                const ch = canvas.clientHeight * dpr;
+                
+                if (canvas.width !== cw || canvas.height !== ch) {
+                    canvas.width = cw;
+                    canvas.height = ch;
+                }
+
                 const imgRatio = img.naturalWidth / img.naturalHeight;
                 const canvasRatio = cw / ch;
 
                 let drawW, drawH, drawX, drawY;
 
                 if (imgRatio > canvasRatio) {
-                    // Image is wider than canvas -> match height, crop width
                     drawH = ch;
                     drawW = img.naturalWidth * (ch / img.naturalHeight);
                     drawX = (cw - drawW) / 2;
                     drawY = 0;
                 } else {
-                    // Image is taller than canvas -> match width, crop height
                     drawW = cw;
                     drawH = img.naturalHeight * (cw / img.naturalWidth);
                     drawX = 0;
                     drawY = (ch - drawH) / 2;
                 }
 
-                // Use high-quality image smoothing
+                // Sharp rendering settings
                 context.imageSmoothingEnabled = true;
                 context.imageSmoothingQuality = 'high';
 
                 context.clearRect(0, 0, cw, ch);
                 context.drawImage(img, drawX, drawY, drawW, drawH);
-            } else {
+            } else if (images[index]) {
                 images[index].onload = () => updateImage(index);
             }
         };
 
         const initCanvas = () => {
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
             updateImage(0);
         };
         
@@ -97,10 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.addEventListener('resize', () => {
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            requestAnimationFrame(() => updateImage(Math.floor((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * frameCount) || 0));
+            requestAnimationFrame(() => {
+                const p = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) || 0;
+                updateImage(Math.floor(p * (frameCount - 1)));
+            });
         });
 
         scroll((info) => {
