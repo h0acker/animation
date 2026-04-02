@@ -1,286 +1,176 @@
 import { animate, scroll, inView, stagger } from "motion";
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Navbar Vanilla Scroll Effect
-    const navbar = document.querySelector('.navbar');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ================= NAVBAR SCROLL ================= */
+    const navbar = document.querySelector(".navbar");
+
+    window.addEventListener("scroll", () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 50);
     });
 
-    // 2. Mobile Menu Setup
-    const menuBtn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
+    /* ================= MOBILE MENU ================= */
+    const menuBtn = document.querySelector(".mobile-menu-btn");
+    const navLinks = document.querySelector(".nav-links");
 
-    if (menuBtn) {
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+    if (menuBtn && navLinks) {
+        menuBtn.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+
+        // Close menu on click (mobile UX)
+        document.querySelectorAll(".nav-links a").forEach(link => {
+            link.addEventListener("click", () => {
+                navLinks.classList.remove("active");
+            });
         });
     }
 
-    // 3. Hero Initial Entrance Animations (Framer Motion equivalent)
-    animate(
-        ".motion-nav-item",
-        { opacity: [0, 1], y: [-20, 0] },
-        { duration: 0.8, delay: stagger(0.1) }
-    );
+    /* ================= NAV ANIMATION ================= */
+    animate(".motion-nav-item", {
+        opacity: [0, 1],
+        y: [-20, 0]
+    }, {
+        duration: 0.8,
+        delay: stagger(0.1)
+    });
 
-    // The new canvas hero manages its own text fades via scroll.
-    // 4. Hero Apple-styled Canvas Scrubbing Sequence
-    const heroSeq = document.querySelector('.hero-sequence');
-    if (heroSeq) {
-        const canvas = document.getElementById("hero-canvas");
-        const context = canvas.getContext("2d");
-        const heroSteps = document.querySelectorAll('.hero-step');
+    /* ================= MOBILE PERFORMANCE CHECK ================= */
+    const isMobile = window.innerWidth < 900;
 
-        const frameCount = 240;
-        const currentFrame = index => (
-            `assets/herosection/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.png`
-        );
+    /* ========================================================= */
+    /* ================= HERO CANVAS (DESKTOP ONLY) ============= */
+    /* ========================================================= */
 
-        const images = [];
-        for (let i = 0; i < frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-            images.push(img);
-        }
+    if (!isMobile) {
 
-        const updateImage = index => {
-            if (images[index] && images[index].complete) {
+        const heroSeq = document.querySelector(".hero-sequence");
+
+        if (heroSeq) {
+            const canvas = document.getElementById("hero-canvas");
+            const context = canvas.getContext("2d");
+            const heroSteps = document.querySelectorAll(".hero-step");
+
+            const frameCount = 120; // reduced from 240 (performance boost)
+
+            const currentFrame = i =>
+                `assets/herosection/ezgif-frame-${(i + 1)
+                    .toString()
+                    .padStart(3, "0")}.png`;
+
+            const images = [];
+
+            for (let i = 0; i < frameCount; i++) {
+                const img = new Image();
+                img.src = currentFrame(i);
+                images.push(img);
+            }
+
+            const updateImage = index => {
                 const img = images[index];
-                
-                // Set canvas size based on device pixel ratio for high DPI (Retina) support
+                if (!img || !img.complete) return;
+
                 const dpr = window.devicePixelRatio || 1;
                 const cw = canvas.clientWidth * dpr;
                 const ch = canvas.clientHeight * dpr;
-                
-                if (canvas.width !== cw || canvas.height !== ch) {
-                    canvas.width = cw;
-                    canvas.height = ch;
-                }
 
-                const imgRatio = img.naturalWidth / img.naturalHeight;
-                const canvasRatio = cw / ch;
-
-                let drawW, drawH, drawX, drawY;
-
-                if (imgRatio > canvasRatio) {
-                    drawH = ch;
-                    drawW = img.naturalWidth * (ch / img.naturalHeight);
-                    drawX = (cw - drawW) / 2;
-                    drawY = 0;
-                } else {
-                    drawW = cw;
-                    drawH = img.naturalHeight * (cw / img.naturalWidth);
-                    drawX = 0;
-                    drawY = (ch - drawH) / 2;
-                }
-
-                // Sharp rendering settings
-                context.imageSmoothingEnabled = true;
-                context.imageSmoothingQuality = 'high';
+                canvas.width = cw;
+                canvas.height = ch;
 
                 context.clearRect(0, 0, cw, ch);
-                context.drawImage(img, drawX, drawY, drawW, drawH);
-            } else if (images[index]) {
-                images[index].onload = () => updateImage(index);
-            }
-        };
+                context.drawImage(img, 0, 0, cw, ch);
+            };
 
-        const initCanvas = () => {
-            updateImage(0);
-        };
-        
-        if (images[0].complete) {
-            initCanvas();
-        } else {
-            images[0].onload = initCanvas;
+            images[0].onload = () => updateImage(0);
+
+            scroll((p) => {
+                const frameIndex = Math.floor(p * (frameCount - 1));
+                requestAnimationFrame(() => updateImage(frameIndex));
+
+                /* TEXT FADE */
+                const segment = 1 / heroSteps.length;
+
+                heroSteps.forEach((step, i) => {
+                    const start = i * segment;
+                    const end = start + segment;
+
+                    step.style.opacity = (p >= start && p <= end) ? 1 : 0;
+                });
+
+            }, {
+                target: heroSeq
+            });
         }
-
-        window.addEventListener('resize', () => {
-            requestAnimationFrame(() => {
-                const p = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) || 0;
-                updateImage(Math.floor(p * (frameCount - 1)));
-            });
-        });
-
-        scroll((info) => {
-            // framer-motion scroll can return either a straight progress number or an info object
-            let p = 0;
-            if (typeof info === 'number') {
-                p = info;
-            } else if (info && info.y) {
-                p = info.y.progress;
-            } else if (info && typeof info.progress === 'number') {
-                p = info.progress;
-            } else {
-                return; // fail silently if nothing matches
-            }
-            
-            // Map progress to frame index
-            const frameIndex = Math.min(
-                frameCount - 1,
-                Math.max(0, Math.floor(p * frameCount))
-            );
-            
-            requestAnimationFrame(() => updateImage(frameIndex));
-            
-            // 4 Text steps fading in/out
-            const segment = 1 / heroSteps.length;
-            heroSteps.forEach((step, index) => {
-                const startFadeIn = index * segment;
-                const endFadeIn = startFadeIn + (segment * 0.2);
-                const startFadeOut = startFadeIn + (segment * 0.8);
-                const endFadeOut = (index + 1) * segment;
-
-                let opacity = 0;
-                let scale = 1.1;
-
-                if (p >= startFadeIn && p <= endFadeIn) {
-                    const localP = (p - startFadeIn) / (segment * 0.2);
-                    opacity = localP;
-                    scale = 0.95 + (localP * 0.05); 
-                } else if (p > endFadeIn && p < startFadeOut) {
-                    opacity = 1;
-                    scale = 1;
-                } else if (p >= startFadeOut && p <= endFadeOut) {
-                    const localP = (p - startFadeOut) / (segment * 0.2);
-                    opacity = 1 - localP;
-                    scale = 1 + (localP * 0.05);
-                } else if (p > endFadeOut) {
-                    opacity = 0;
-                }
-
-                step.style.opacity = opacity;
-                step.style.transform = `scale(${scale})`;
-            });
-            
-            // Fade out the scroll indicator quickly
-            const indicator = heroSeq.querySelector('.scroll-indicator');
-            if (indicator) {
-                indicator.style.opacity = Math.max(0, 1 - (p * 20));
-            }
-            
-        }, {
-            target: heroSeq,
-            offset: ["start start", "end end"]
-        });
     }
 
-    // 5. Apple-like Details Section Scrolling
-    const detailsSection = document.querySelector('#details');
-    if (detailsSection) {
-        const steps = document.querySelectorAll('.detail-step');
-        const visual = document.querySelector('.details-visual');
-        const img = visual.querySelector('img');
+    /* ========================================================= */
+    /* ================= DETAILS SECTION ======================== */
+    /* ========================================================= */
 
-        scroll((info) => {
-            let p = 0;
-            if (typeof info === 'number') {
-                p = info;
-            } else if (info && info.y) {
-                p = info.y.progress;
-            } else if (info && typeof info.progress === 'number') {
-                p = info.progress;
-            } else {
-                return;
-            }
-            
-            // Visual container fade in/out
-            if(p > 0.05 && p < 0.95) {
-                // Fade in early, fade out late
-                let visOpacity = 1;
-                if(p < 0.1) visOpacity = (p - 0.05) / 0.05;
-                if(p > 0.9) visOpacity = (0.95 - p) / 0.05;
-                visual.style.opacity = visOpacity;
-            } else {
-                visual.style.opacity = 0;
-            }
+    const detailsSection = document.querySelector("#details");
 
-            // Image scaling effect
-            if (img) {
-                img.style.transform = `scale(${1 + (p * 0.3)})`;
-            }
+    if (detailsSection && !isMobile) {
 
-            // Stagger text steps
-            const stepCount = steps.length;
-            const segment = 1 / stepCount;
+        const steps = document.querySelectorAll(".detail-step");
 
-            steps.forEach((step, index) => {
-                const startFadeIn = index * segment;
-                const endFadeIn = startFadeIn + (segment * 0.2);
-                const startFadeOut = startFadeIn + (segment * 0.8);
-                const endFadeOut = (index + 1) * segment;
+        scroll((p) => {
+            const segment = 1 / steps.length;
 
-                let opacity = 0;
-                let y = 50;
+            steps.forEach((step, i) => {
+                const start = i * segment;
+                const end = start + segment;
 
-                if (p >= startFadeIn && p <= endFadeIn) {
-                    // Fading in
-                    const localP = (p - startFadeIn) / (segment * 0.2);
-                    opacity = localP;
-                    y = 50 - (localP * 50);
-                } else if (p > endFadeIn && p < startFadeOut) {
-                    // Holding state
-                    opacity = 1;
-                    y = 0;
-                } else if (p >= startFadeOut && p <= endFadeOut) {
-                    // Fading out
-                    const localP = (p - startFadeOut) / (segment * 0.2);
-                    opacity = 1 - localP;
-                    y = -localP * 50;
-                } else if (p > endFadeOut) {
-                    // Past step
-                    opacity = 0;
-                    y = -50;
-                }
-
-                step.style.opacity = opacity;
-                step.style.transform = `translateY(-50%) translateY(${y}px)`;
+                step.style.opacity = (p >= start && p <= end) ? 1 : 0;
             });
 
         }, {
-            target: detailsSection,
-            offset: ["start start", "end end"]
+            target: detailsSection
         });
     }
 
-    // 6. In-View reveals for standard sections
-    // General fades
-    inView(".motion-fade", (info) => {
-        animate(info.target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.8 });
+    /* ========================================================= */
+    /* ================= IN-VIEW ANIMATIONS ===================== */
+    /* ========================================================= */
+
+    inView(".motion-fade", (el) => {
+        animate(el.target, {
+            opacity: [0, 1],
+            y: [30, 0]
+        }, { duration: 0.8 });
     });
 
-    // Pricing Cards Stagger
     inView(".pricing-section", () => {
-        animate(
-            ".motion-card",
-            { opacity: [0, 1], scale: [0.9, 1] },
-            { duration: 0.6, delay: stagger(0.2) }
-        );
+        animate(".motion-card", {
+            opacity: [0, 1],
+            scale: [0.9, 1]
+        }, {
+            duration: 0.6,
+            delay: stagger(0.2)
+        });
     });
 
-    // Features Stagger
     inView(".features", () => {
-        animate(
-            ".motion-fade-up",
-            { opacity: [0, 1], y: [50, 0] },
-            { duration: 0.8, delay: stagger(0.15) }
-        );
+        animate(".motion-fade-up", {
+            opacity: [0, 1],
+            y: [50, 0]
+        }, {
+            duration: 0.8,
+            delay: stagger(0.15)
+        });
     });
 
-    // Transformation Slide-Ins
-    document.querySelectorAll('.motion-slide-in').forEach((el, i) => {
+    document.querySelectorAll(".motion-slide-in").forEach((el, i) => {
         inView(el, (info) => {
-            const direction = i % 2 === 0 ? -100 : 100;
-            animate(
-                info.target,
-                { opacity: [0, 1], x: [direction, 0] },
-                { duration: 1, easing: [0.165, 0.84, 0.44, 1] } // Custom spring-like easing
-            );
-        }, { margin: "-100px" });
+            const dir = i % 2 === 0 ? -100 : 100;
+
+            animate(info.target, {
+                opacity: [0, 1],
+                x: [dir, 0]
+            }, {
+                duration: 1
+            });
+
+        });
     });
+
 });
